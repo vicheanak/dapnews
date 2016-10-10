@@ -8,7 +8,7 @@ import time
 
 class TestSpider(CrawlSpider):
     name = "dapnews"
-    allowed_domains = ["dapnews.com.kh"]
+    allowed_domains = ["dap-news.com"]
     start_urls = [
     'http://dap-news.com/kh/ព័ត៌មានក្នុងប្រទេស',
     ]
