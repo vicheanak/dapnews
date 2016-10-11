@@ -31,8 +31,6 @@ class MySQLPipeline(object):
         )
         self.stats = stats
         dispatcher.connect(self.spider_closed, signals.spider_closed)
-        now = time.strftime('%Y-%m-%d %H:%M:%S')
-        print('KSP =====> [' + now + '] DB Connected')
     def spider_closed(self, spider):
         """ Cleanup function, called after crawing has finished to close open
             objects.
