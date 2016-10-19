@@ -6,6 +6,8 @@ from scrapy.linkextractors import LinkExtractor
 import time
 import lxml.etree
 import lxml.html
+from stripogram import html2text, html2safehtml
+from htmlmin import minify
 
 
 class TestSpider(CrawlSpider):
@@ -42,6 +44,7 @@ class TestSpider(CrawlSpider):
                 item['url'] = url.extract_first()
 
             imageUrl = h.xpath('following-sibling::div[@class="feature-image"][1]/img/@src')
+            item['imageUrl'] = ''
             if not imageUrl:
                 print('DAP => [' + now + '] No imageUrl')
             else:
@@ -58,7 +61,10 @@ class TestSpider(CrawlSpider):
         lxml.etree.strip_elements(root, lxml.etree.Comment, "script", "head")
         htmlcontent = ''
         for p in root.xpath('//div[@class="article-content"][1]'):
-            htmlcontent = lxml.html.tostring(p, encoding=unicode)
+            unclean_html = lxml.html.tostring(p, encoding=unicode)
+            clean_html = html2safehtml(unclean_html, valid_tags=("p", "img"))
+            minified_html = minify(clean_html)
+            htmlcontent = minified_html
 
         item['htmlcontent'] = htmlcontent
         yield item
