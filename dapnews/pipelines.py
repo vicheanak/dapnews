@@ -43,11 +43,34 @@ class MySQLPipeline(object):
 
     def _insert_record(self, tx, item):
         now = time.strftime('%Y-%m-%d %H:%M:%S')
+        website_id = '2'
         tx.execute("SELECT 1 FROM NewsArticles WHERE url = %s", (item['url'], ))
         ret = tx.fetchone()
         if not ret:
-            result = tx.execute("INSERT INTO NewsArticles(name, description, url, imageUrl, createdAt, updatedAt, WebsiteId, NewsCategoryId) VALUES ('" + item['name'] + "', '" + item['description'] + "', '" + item['url'] + "', '" + item['imageUrl'] + "', '" + now + "', '" + now + "', '" + '2' + "', '" + item['categoryId'] + "')"
-            )
+            result = tx.execute("""
+                INSERT INTO NewsArticles(
+                name,
+                description,
+                url,
+                imageUrl,
+                createdAt,
+                updatedAt,
+                WebsiteId,
+                NewsCategoryId,
+                htmlcontent)
+                VALUES
+                (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    item['name'],
+                    item['description'],
+                    item['url'],
+                    item['imageUrl'],
+                    now,
+                    now,
+                    website_id,
+                    item['categoryId'],
+                    item['htmlcontent']
+                    ))
             if result > 0:
                 self.stats.inc_value('database/items_added')
 
